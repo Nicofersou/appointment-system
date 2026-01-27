@@ -1,10 +1,14 @@
 package com.nfernandes.appointment_system.reservation;
 
 
+import com.nfernandes.appointment_system.businessService.BusinessService;
+import com.nfernandes.appointment_system.person.client.Client;
+import com.nfernandes.appointment_system.person.worker.Worker;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -50,5 +54,5 @@ public class Reservation {
             joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
-    private Set<Service> services;
+    private Set<BusinessService> services = new HashSet<>();
 }
