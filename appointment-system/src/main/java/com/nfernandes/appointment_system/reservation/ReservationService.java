@@ -1,6 +1,7 @@
 package com.nfernandes.appointment_system.reservation;
 
 import com.nfernandes.appointment_system.businessService.BusinessService;
+import com.nfernandes.appointment_system.businessService.BusinessServiceRepository;
 import com.nfernandes.appointment_system.person.client.Client;
 import com.nfernandes.appointment_system.person.client.ClientRepository;
 import com.nfernandes.appointment_system.person.worker.Worker;
@@ -22,11 +23,13 @@ public class ReservationService {
     private ReservationRepository reservationRepository;
     private ClientRepository clientRepository;
     private WorkerRepository workerRepository;
+    private BusinessServiceRepository businessServiceRepository;
 
-    public Reservation createReservation(Long clientId,Long workerId,Set<BusinessService> services,LocalDateTime startDateTime){
+    public Reservation createReservation(Long clientId,Long workerId,Set<Long> serviceIds,LocalDateTime startDateTime){
 
         Client client = clientRepository.findById(clientId).orElseThrow(() -> new EntityNotFoundException("Client Not found"));
         Worker worker = workerRepository.findById(workerId).orElseThrow(() -> new EntityNotFoundException("Worker not found"));
+        Set<BusinessService> services = Set.copyOf(businessServiceRepository.findAllById(serviceIds));
          if(!worker.isActive()){
              throw new IllegalStateException("Worker is not active");
          }
