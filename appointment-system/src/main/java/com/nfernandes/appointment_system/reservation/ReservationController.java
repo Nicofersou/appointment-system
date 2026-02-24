@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.nfernandes.appointment_system.reservation.mapper.ReservationMapper;
 
 import java.util.stream.Collectors;
 
@@ -19,8 +20,12 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    public ReservationController(ReservationService reservationService){
+
+    private final ReservationMapper reservationMapper;
+
+    public ReservationController(ReservationService reservationService, ReservationMapper reservationMapper){
         this.reservationService = reservationService;
+        this.reservationMapper = reservationMapper;
     }
 
     @PostMapping
@@ -29,23 +34,13 @@ public class ReservationController {
             ){
         Reservation reservation = reservationService.createReservation(request.getClientId(), request.getWorkerId(), request.getServiceIds(),request.getStartTime());
 
-        ReservationResponse response = mapToResponse(reservation);
+        ReservationResponse response = reservationMapper.toResponse(reservation);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
 
     }
 
-    private ReservationResponse mapToResponse(Reservation reservation){
-        ReservationResponse response = new ReservationResponse();
-        response.setId(reservation.getId());
-        response.setClientId(reservation.getClient().getId());
-        response.setWorkerId(reservation.getWorker().getId());
-        response.setServiceIds(reservation.getServices().stream().map(service -> service.getId()).collect(Collectors.toSet()));
-        response.setStartTime(reservation.getStartDateTime());
-        response.setEndTime(reservation.getEndDateTime());
-        return response;
 
-    }
 
 }
